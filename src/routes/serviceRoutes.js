@@ -4,9 +4,6 @@ const router = express.Router();
 const serviceController = require("../controllers/serviceController");
 
 router.get("/", serviceController.getServices);
-
-router.get("/:id", serviceController.getServiceById);
-
 router.post("/create", upload.single("image"), async (req, res, next) => {
 
     /* 
@@ -38,5 +35,9 @@ router.post("/create", upload.single("image"), async (req, res, next) => {
     next();
 
 }, serviceController.createService);
+
+router.get("/:id", serviceController.getServiceById);
+
+
 
 module.exports = router;
