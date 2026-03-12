@@ -1,20 +1,6 @@
 const serviceService = require("../services/serviceService");
+const uploadToCloudinary = require("../utils/cloudinaryUpload");
 
-exports.createService = async (req, res) => {
-
-    try {
-
-        const service = await serviceService.createService(req.body);
-
-        res.status(200).json(service);
-
-    } catch (err) {
-
-        res.status(500).json({ error: err.message });
-
-    }
-
-};
 
 exports.getServices = async (req, res) => {
 
@@ -47,5 +33,38 @@ exports.getServiceById = async (req, res) => {
         res.status(500).json({ error: err.message });
 
     }
+
+};
+
+exports.createService = async (req, res) => {
+
+  try {
+
+    const { title, description, base_price, rating } = req.body;
+
+    let imageUrl = null;
+
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer);
+      imageUrl = result.secure_url;
+    }
+
+    const service = await serviceService.createService({
+      title,
+      image_url: imageUrl,
+      description,
+      base_price,
+      rating,
+      created_at: new Date()
+    });
+
+    res.status(200).json(service);
+
+  } catch (err) {
+
+    console.error("CREATE SERVICE ERROR:", err);
+    res.status(500).json({ error: err.message });
+
+  }
 
 };
